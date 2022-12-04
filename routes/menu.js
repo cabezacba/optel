@@ -7,7 +7,8 @@ const router = Router();
 router.post('/add',menuPost);
 router.delete('/delete/:id',menuDelete);
 router.put('/update/:id',menuPut);
-router.get('/:id',menuGet);
 router.get('/all',menuAllGet);
+router.get('/:id',menuGet);
+
 
 module.exports = router;

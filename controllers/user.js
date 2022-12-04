@@ -13,17 +13,19 @@ const userPost = async (req,res) => {
         state:1
     };
     try {    
+        
+        //valido existencia de email
         const existeEmail = await Usuario.findOne({
             where:{
                 email: email
             }
-        })
+        });
 
         if(existeEmail){
             return res.status(400).json({
                 msg: `Ya existe un usuario con email: ${email}`
             })
-        }
+        };
         
         const user = new Usuario(dates);
         await user.save();
@@ -52,7 +54,7 @@ const userDelete = async (req, res = response) => {
                 
         await user.update({state: 0});
         res.json ({
-            msg: `Usuario con id ${id}`
+            msg: `Usuario: ${user}`
         });
         
     } catch (error) {
@@ -69,6 +71,7 @@ const userPut = async (req, res = response) => {
     const id = req.params.id;
     const {username, lastname, email, password, name}  = req.query;
     const dates = {
+        username,
         name,
         lastname,
         email,
@@ -77,12 +80,27 @@ const userPut = async (req, res = response) => {
     try {    
         const user = await Usuario.findByPk(id);
 
+        //valido exitencia usario
         if(!user){
             return res.status(404).json({
                 msg: `No existe un usuario con id: ${id}`
             });
         };
+        
+        //valido existencia username
+        const existeUser = await Usuario.findOne({
+            where:{
+                username: username
+            }
+        });
+        
+        if(existeUser){
+            return res.status(400).json({
+                msg: `Ya existe un usuario con username: ${username}, no puede actulizar el usarname`
+            })
+        };
 
+        //valido exitencia email
         const existeEmail = await Usuario.findOne({
             where:{
                 email: email
@@ -108,7 +126,9 @@ const userPut = async (req, res = response) => {
 
 const userGet = async (req, res = response) => {
     const id = req.params.id;
-    const user = await Usuario.findByPk(id);
+    const user = await Usuario.findByPk(id,{
+        attributes: ['username', 'name', 'lastname', 'email'],
+    });
     
     if(user){
            res.json(user);

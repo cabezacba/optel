@@ -25,6 +25,7 @@ const User = db.define('User',{
     },    
     state: {
         type: DataTypes.BOOLEAN,
+        allowNull: false
       }
 });
 

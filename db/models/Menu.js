@@ -10,6 +10,10 @@ const Menu = db.define('Menu',{
     parentID: {
       type: DataTypes.INTEGER,
       allowNull: true
+    },
+    state: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false
     }
 });
 
