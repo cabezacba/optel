@@ -1,6 +1,7 @@
 const express = require('express')
 const db = require('../db/db')
 const User = require('../db/models/User')
+const Menu = require('../db/models/Menu')
 
 
 class Server {
@@ -39,8 +40,7 @@ class Server {
     }
 
     middlewares(){
-        // Directorio Publico
-        this.app.use(express.static('public'))
+
 
         //Read and pharser body
         this.app.use( express.json() );
