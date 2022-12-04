@@ -1,5 +1,6 @@
 const { response } = require('express');
 const { request } = require('express');
+const { json } = require('sequelize');
 
 const Menu = require('../db/models/Menu')
 
@@ -107,14 +108,21 @@ const menuGet = async (req, res = response) => {
 };
 
 const menuAllGet = async (req, res = response) => {
+    
     try {
         const menus = await Menu.findAll({
             attributes: ['name', 'parentID'],
-            where: { state: 1 }
+            where: { state: 1 },
+            raw : true 
           });
         
-        if(menus){
-            res.json(menus);
+        //valido que existan munus en el sistema
+        if(menus){           
+            // tengo que hacer la recursion para acomodar los padres y los hijos
+            // construyo un array a partir del listado de menus para contruir la estructura padres hijos
+            const arr = Object.keys(menus).map((key) => [{id: key, name: menus[key].name, parent: menus[key].parentID}]);
+            res.json(arr);
+                       
         }else{
          res.status(404).json({
              msg: `No existe menus en el sistema`
@@ -125,8 +133,7 @@ const menuAllGet = async (req, res = response) => {
         res.status(500).json({
             msg: "Error en el servidor comunicase con el adminstrador",
         })
-    }    
-   
+    }  
 };
 
 
