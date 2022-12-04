@@ -1,4 +1,6 @@
 const express = require('express')
+const db = require('../db/db')
+const User = require('../db/models/User')
 
 
 class Server {
@@ -9,6 +11,8 @@ class Server {
         this.userPath = '/users';
         this.menuPath = '/menus';
         
+        // connection DB
+        this.dbConnection();
         // middlewares
         this.middlewares();
         
@@ -21,6 +25,17 @@ class Server {
        this.app.use(this.userPath, require('../routes/user.js'));
        this.app.use(this.menuPath, require('../routes/menu.js'));
     
+    }
+
+    dbConnection(){
+        
+            db.sync({force: false}).then(() => {
+                console.log("se conecto a la bd");
+            }).catch((error)=>{
+                console.log(error);
+            });
+            
+      
     }
 
     middlewares(){

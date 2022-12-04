@@ -3,11 +3,17 @@ const { response } = require('express');
 
 const userPost = (req, res = response) => {
     
-    const body = req.body;
-    console.log(body);
+    const query = req.query;
+    console.log(query);
     res.json({
         msg: 'post user userPost',
-        body
+        query
+    })
+};
+
+const userDelete = (req, res = response) => {
+    res.json({
+        msg: 'delete user userDelete'
     })
 };
 
@@ -21,15 +27,13 @@ const userPut = (req, res = response) => {
     })
 };
 
-const userDelete = (req, res = response) => {
-    res.json({
-        msg: 'delete user userDelete'
-    })
-};
 
 const userGet = (req, res = response) => {
+    const id = req.params.id;
+    
     res.json({
-        msg: 'get user userGet'
+        msg: 'get user userGet',
+        id
     })
 };
 
