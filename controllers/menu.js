@@ -8,7 +8,8 @@ const menuPost = async (req = request, res = response) => {
     const {name, parentID}  = req.query;
     const dates = {
         name,
-        parentID
+        parentID,
+        state:1
     };
     try {    
                 
@@ -40,7 +41,7 @@ const menuDelete = async (req = request, res = response) => {
                 
         await menu.update({state: 0});
         res.json ({
-            msg: `Menu: ${menu}`
+            msg: `Menu: ${menu.name} fue borrado`
         });
         
     } catch (error) {
@@ -57,13 +58,14 @@ const menuPut = async (req, res = response) => {
     const {name, parentID} = req.query;
     const dates = {
         name,
-        parentID,  
+        parentID
+         
     };
 
     try {    
         const menu = await Menu.findByPk(id);
      
-        //valido exitencia usario
+        //valido exitencia menu
         if(!menu){
             return res.status(404).json({
                 msg: `No existe un menu con id: ${id}`
@@ -71,7 +73,8 @@ const menuPut = async (req, res = response) => {
         };       
                 
         await menu.update(dates);
-        res.json (menu);
+        res.json ({
+            msd: `El menu id ${menu.id} fue modicado`});
         
     } catch (error) {
         console.log(error),
@@ -83,34 +86,47 @@ const menuPut = async (req, res = response) => {
 
 const menuGet = async (req, res = response) => {
     const id = req.params.id;
-    const menu = await Menu.findByPk(id);
     
-    if(menu){
-           res.json(menu);
-    }else{
-        res.status(404).json({
-            msg: `No existe menu con id ${id}`
-        });
-    }
+    try {
+        const menu = await Menu.findByPk(id);
     
-   
+        if(menu){
+               res.json(menu);
+        }else{
+            res.status(404).json({
+                msg: `No existe menu con id ${id}`
+            });
+        }
+        
+    } catch (error) {
+        console.log(error),
+        res.status(500).json({
+            msg: "Error en el servidor comunicase con el adminstrador",
+        })
+    }   
 };
 
 const menuAllGet = async (req, res = response) => {
-    const menus = await Menu.findAll({
-        attributes: ['name', 'parentID'],
-        where: { state: 1 }
-      });
-    
-    if(menus){
-        res.json(menus);
-    }else{
-     res.status(404).json({
-         msg: `No existe menus en el sistema`
-     });
- }
-
-    
+    try {
+        const menus = await Menu.findAll({
+            attributes: ['name', 'parentID'],
+            where: { state: 1 }
+          });
+        
+        if(menus){
+            res.json(menus);
+        }else{
+         res.status(404).json({
+             msg: `No existe menus en el sistema`
+         });
+        } 
+    } catch (error) {
+        console.log(error),
+        res.status(500).json({
+            msg: "Error en el servidor comunicase con el adminstrador",
+        })
+    }    
+   
 };
 
 

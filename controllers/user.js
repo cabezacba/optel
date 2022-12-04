@@ -1,4 +1,5 @@
 const { response } = require('express');
+const Menu = require('../db/models/Menu');
 const Usuario = require('../db/models/User')
 
 
@@ -54,7 +55,7 @@ const userDelete = async (req, res = response) => {
                 
         await user.update({state: 0});
         res.json ({
-            msg: `Usuario: ${user}`
+            msg: `Usuario: ${user.username} fue borrado del sistema`
         });
         
     } catch (error) {
@@ -71,14 +72,16 @@ const userPut = async (req, res = response) => {
     const id = req.params.id;
     const {username, lastname, email, password, name}  = req.query;
     const dates = {
-        username,
-        name,
-        lastname,
-        email,
-        password,  
+        username: username,
+        name: name,
+        lastname: lastname,
+        email: email,
+        password: password,  
     };
     try {    
         const user = await Usuario.findByPk(id);
+
+
 
         //valido exitencia usario
         if(!user){
@@ -113,7 +116,8 @@ const userPut = async (req, res = response) => {
         };
                 
         await user.update(dates);
-        res.json (user);
+        res.json ({
+            msg: `El usuario ${user.username} fue modificado`});
         
     } catch (error) {
         console.log(error),
@@ -126,45 +130,87 @@ const userPut = async (req, res = response) => {
 
 const userGet = async (req, res = response) => {
     const id = req.params.id;
-    const user = await Usuario.findByPk(id,{
-        attributes: ['username', 'name', 'lastname', 'email'],
-    });
     
-    if(user){
+    try {
+        const user = await Usuario.findByPk(id,{
+            attributes: ['username', 'name', 'lastname', 'email'],
+        });
+    
+        if(user){
            res.json(user);
-    }else{
-        res.status(404).json({
+        }else{
+            res.status(404).json({
             msg: `No existe usuario con id ${id}`
         });
     }
-    
- 
+    } catch (error) {        
+        console.log(error),
+        res.status(500).json({
+            msg: "Error en el servidor comunicase con el adminstrador",
+        }) 
+    }
 };
 
-const userMenuGet = (req, res = response) => {
-    res.json({
-        msg: 'get user userMenuGet'
-    })
+const userMenuGet = async (req, res = response) => {
+    
+    const id = req.params.id;
+    
+    try {
+        const user = await Usuario.findByPk(id,{
+            attributes: ['username', 'name', 'lastname', 'email'],
+            include: [
+                {
+                model: Menu,
+                attributes: ['name'],
+                through: {
+                    attributes: [],
+                }
+           }]
+        });
+
+        if(user){
+            res.json(user);
+        }else{
+            res.status(404).json({
+                msg: `No existe usuario con id ${id}`
+            });
+        }
+
+
+    } catch (error) {
+        console.log(error),
+        res.status(500).json({
+            msg: "Error en el servidor comunicarse con el adminstrador",
+        }) 
+    } 
+    
 };
 
 const userAllGet = async(req, res = response) => {
     
-    const users = await Usuario.findAll({
-        attributes: ['username', 'name', 'lastname', 'email'],
-        where: { state: 1 }
-      });
-    
-    if(users){
-           res.json(users);
-    }else{
-        res.status(404).json({
-            msg: `No existe usuarios en el sistema`
+    try {
+        const users = await Usuario.findAll({
+            attributes: ['username', 'name', 'lastname', 'email'],
+            where: { state: 1 }
         });
+    
+        if(users){
+           res.json(users);
+        }else{
+            res.status(404).json({
+              msg: `No existe usuarios en el sistema`
+            });
+        }
+    } catch (error) {
+        console.log(error),
+        res.status(500).json({
+            msg: "Error en el servidor comunicarse con el adminstrador",
+        });        
     }
-        
-    res.json({
-        msg: 'get user  userAllGet'
-    })
+    
+   
+   
+  
 };
 
 module.exports = {userGet, userPost, userPut, userDelete, userMenuGet, userAllGet}

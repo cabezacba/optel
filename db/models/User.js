@@ -1,11 +1,13 @@
 const {Model, DataTypes} = require('sequelize')
 
 const db = require ('../db');
+const Menu = require ('../models/Menu')
 
 const User = db.define('User',{
     username: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     name: {
         type: DataTypes.STRING,
@@ -21,7 +23,9 @@ const User = db.define('User',{
       },  
     email: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true,
+        isEmail: true,
     },    
     state: {
         type: DataTypes.BOOLEAN,
@@ -29,5 +33,6 @@ const User = db.define('User',{
       }
 });
 
+User.belongsToMany(Menu, { through: 'MenusToUsers'});
 
 module.exports = User;
