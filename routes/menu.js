@@ -10,5 +10,4 @@ router.put('/update/:id',menuPut);
 router.get('/all',menuAllGet);
 router.get('/:id',menuGet);
 
-
 module.exports = router;

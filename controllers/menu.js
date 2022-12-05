@@ -121,6 +121,7 @@ const menuAllGet = async (req, res = response) => {
             // tengo que hacer la recursion para acomodar los padres y los hijos
             // construyo un array a partir del listado de menus para contruir la estructura padres hijos
             const arr = Object.keys(menus).map((key) => [{id: key, name: menus[key].name, parent: menus[key].parentID}]);
+
             res.json(arr);
                        
         }else{

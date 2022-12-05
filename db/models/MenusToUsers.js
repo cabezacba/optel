@@ -14,7 +14,4 @@ const MenusToUsers = db.define('grant', {
     },    
   }, { timestamps: false });
 
-
-
-
 module.exports = MenusToUsers;

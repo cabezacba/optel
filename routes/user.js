@@ -13,9 +13,4 @@ router.get('/all',userAllGet);
 router.get('/:id',userGet);
 router.get('/:id/menus',userMenuGet);
 
-
-
-
-
-
 module.exports = router;

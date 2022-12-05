@@ -2,8 +2,6 @@ const express = require('express')
 const db = require('../db/db')
 const User = require('../db/models/User')
 const Menu = require('../db/models/Menu')
-
-
 class Server {
 
     constructor(){
@@ -14,18 +12,18 @@ class Server {
         
         // connection DB
         this.dbConnection();
+        
         // middlewares
         this.middlewares();
         
         // Routes
-        
         this.routes();
     }
 
     routes(){
+     
        this.app.use(this.userPath, require('../routes/user.js'));
        this.app.use(this.menuPath, require('../routes/menu.js'));
-    
     }
 
     dbConnection(){
@@ -35,19 +33,15 @@ class Server {
             }).catch((error)=>{
                 console.log(error);
             });
-            
-      
     }
 
     middlewares(){
-
-
-        //Read and pharser body
+    
         this.app.use( express.json() );
-
     }
 
     listen(){
+        
         this.app.listen( this.port, ()=> {
             console.log("Escuchando en: ", this.port );   
         });
