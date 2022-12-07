@@ -2,6 +2,8 @@ const { response } = require('express');
 const { request } = require('express');
 const { json } = require('sequelize');
 
+const { list_to_tree } = require('../lib/lib')
+
 const Menu = require('../db/models/Menu')
 
 const menuPost = async (req = request, res = response) => {
@@ -111,18 +113,16 @@ const menuAllGet = async (req, res = response) => {
     
     try {
         const menus = await Menu.findAll({
-            attributes: ['name', 'parentID'],
+            attributes: ['id','name', 'parentID'],
             where: { state: 1 },
             raw : true 
           });
         
         //valido que existan munus en el sistema
-        if(menus){           
-            // tengo que hacer la recursion para acomodar los padres y los hijos
-            // construyo un array a partir del listado de menus para contruir la estructura padres hijos
-            const arr = Object.keys(menus).map((key) => [{id: key, name: menus[key].name, parent: menus[key].parentID}]);
+        if(menus){          
 
-            res.json(arr);
+            //armo el menu anidado con la funcion list_to_tree
+            res.json(list_to_tree(menus));
                        
         }else{
          res.status(404).json({
@@ -137,6 +137,35 @@ const menuAllGet = async (req, res = response) => {
     }  
 };
 
+
+
+//function list_to_tree(list) {
+//    console.log(list)
+//    //declaro las variables locales
+//    var map = {}, node, roots = [], i;
+//    
+//    for (i = 0; i < list.length; i += 1) {
+//      map[list[i].id] = i; // Inicializo el map      
+//      list[i].children = []; // Inicializo el children      
+//    }
+//    
+//    //recorro todos los  menus
+//  
+//    for (i = 0; i < list.length; i += 1) {
+//      //tomo en menu que esta en lugar i
+//      node = list[i];
+//      
+//      // si el menu tiene padre
+//      if (node.parentID !== null) {
+//        // pongo el hijo dle menu en el padre     
+//        list[map[node.parentID.toString()]].children.push(node);
+//
+//      } else {
+//        roots.push(node);
+//      }
+//    } 
+//    return roots;
+// }
 
 
 module.exports = { menuGet, menuPost, menuPut, menuDelete, menuAllGet}
